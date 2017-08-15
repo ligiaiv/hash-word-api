@@ -5,32 +5,20 @@ import os
 import pymongo
 from pymongo import MongoClient
 
-#mongo config
-SERVER = ''
-PORT = ''
-USER = ''
-PASSWD = ''
-DB = ''
-COLLECT = ''
-CACHE = ''
-
 def read_db_config(folder, filename):
-  with open(os.path.join(folder, filename), 'r') as db_init:
-    DATA = {}
-    for line in db_init:
-      if line.startswith('#') or line == '\n':
-        continue
-      else:
-        data = line
-        data = data.split(' ')
-        for i in range(0,len(data),2):
-          # remove line break at the enddings
-          if data[i+1].endswith('\n'):
-            data[i+1] = data[i+1][:(len(data[i+1])-1)]
-          # append to config data
-          DATA[data[i]] = data[i+1]
-
-    return DATA
+  return {
+    'user': os.environ['MONGO_URI_USER'],
+    'password': os.environ['MONGO_URI_PASSWORD'],
+    'server': os.environ['MONGO_URI_SERVER'],
+    'port': os.environ['MONGO_URI_PORT'],
+    'db': os.environ['MONGO_URI_DB'],
+    'twitter': os.environ['COLLECTION_TWITTER'],
+    'facebook_comments': os.environ['COLLECTION_FB_COMMENTS'],
+    'facebook_pages': os.environ['COLLECTION_FB_PAGES'],
+    'facebook_posts': os.environ['COLLECTION_FB_POSTS'],
+    'instagram': os.environ['COLLECTION_INSTAGRAM'],
+    'cache': os.environ['COLLECTION_CACHE'],
+  }
 
 def db_connect(SERVER, PORT, DB, COLLECT, CACHE, USER, PASSWD):
   print('\nTrying to connect to ' + SERVER + ' at ' + PORT)

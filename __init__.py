@@ -151,7 +151,7 @@ if __name__ == "__main__":
     port = sys.argv[1]
     print('port: ' + str(port))
   except Exception:
-    port = 8081
+    port = os.environ.get('PORT', 8081)
     print('Default port: ' + str(port))
   # starts server
   # multithread CherryPy
