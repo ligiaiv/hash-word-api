@@ -1,0 +1,422 @@
+{
+    "_id" : "100114543363891_1203349789707022",
+    "caption" : "www1.folha.uol.com.br",
+    "description" : null,
+    "message" : "Prepare-se! (via Revista sãopaulo) #folha",
+    "hashtags" : [ 
+        "#folha"
+    ],
+    "name" : "Em função do Enem, Paulista fecha para carros mais tarde neste domingo",
+    "object_id" : null,
+    "from" : {
+        "id" : "100114543363891",
+        "name" : "Folha de S.Paulo",
+        "category" : "Mídia/notícias/publicidade",
+        "created_time_ms" : 0
+    },
+    "to" : [ 
+        {
+            "id" : "143977995665337",
+            "name" : "Revista sãopaulo"
+        }
+    ],
+    "comments_count" : 20,
+    "likes" : [ 
+        {
+            "id" : "969881969739214",
+            "name" : "Kellyn Almeida",
+            "category" : null
+        }, 
+        {
+            "id" : "690929094373870",
+            "name" : "Alexandre Maia",
+            "category" : null
+        }, 
+        {
+            "id" : "887867281283798",
+            "name" : "Mariza Silva",
+            "category" : null
+        }, 
+        {
+            "id" : "1451597608481032",
+            "name" : "Jaqueline França",
+            "category" : null
+        }, 
+        {
+            "id" : "10205931331356308",
+            "name" : "Giuliana Carrapito",
+            "category" : null
+        }, 
+        {
+            "id" : "866599286766905",
+            "name" : "Elineide Abreu",
+            "category" : null
+        }, 
+        {
+            "id" : "852961884782700",
+            "name" : "Ribas Marques",
+            "category" : null
+        }, 
+        {
+            "id" : "101179260245336",
+            "name" : "Luiz Henrique Barros",
+            "category" : null
+        }, 
+        {
+            "id" : "1641996716080008",
+            "name" : "Hee Jae Kim",
+            "category" : null
+        }, 
+        {
+            "id" : "783683785081288",
+            "name" : "Douglas Cabral",
+            "category" : null
+        }, 
+        {
+            "id" : "838600519555617",
+            "name" : "Daianne Spinosa",
+            "category" : null
+        }, 
+        {
+            "id" : "927752700616387",
+            "name" : "Leandro Eugênio",
+            "category" : null
+        }, 
+        {
+            "id" : "1019930704717660",
+            "name" : "Josemar Alves",
+            "category" : null
+        }, 
+        {
+            "id" : "10152906105477077",
+            "name" : "Ana Luisa Néca",
+            "category" : null
+        }, 
+        {
+            "id" : "1605046246400175",
+            "name" : "Elizete Bottoni",
+            "category" : null
+        }, 
+        {
+            "id" : "885298641542565",
+            "name" : "Adriana Felix",
+            "category" : null
+        }, 
+        {
+            "id" : "881209368635711",
+            "name" : "Ana Beatriz Ferreira",
+            "category" : null
+        }, 
+        {
+            "id" : "10208231538452862",
+            "name" : "Larissa Vilas Boas",
+            "category" : null
+        }, 
+        {
+            "id" : "464093663798965",
+            "name" : "Joao Dias Da Cruz Junior",
+            "category" : null
+        }, 
+        {
+            "id" : "1598210317107516",
+            "name" : "Zeca D'Apice",
+            "category" : null
+        }, 
+        {
+            "id" : "875212405848096",
+            "name" : "Amanda Guerra de Oliveira",
+            "category" : null
+        }, 
+        {
+            "id" : "1511519675840048",
+            "name" : "Eduardo Ferrari",
+            "category" : null
+        }, 
+        {
+            "id" : "10208140986141059",
+            "name" : "Bruno Falcone Stamford",
+            "category" : null
+        }, 
+        {
+            "id" : "1613034995638184",
+            "name" : "Maria de Jesus",
+            "category" : null
+        }, 
+        {
+            "id" : "1615125075423349",
+            "name" : "Joaquim Teodoro",
+            "category" : null
+        }, 
+        {
+            "id" : "1450538945249894",
+            "name" : "Elizangila Pereira",
+            "category" : null
+        }, 
+        {
+            "id" : "10200630906572579",
+            "name" : "Elio Senna",
+            "category" : null
+        }, 
+        {
+            "id" : "10200589513495590",
+            "name" : "Henrique Moraes",
+            "category" : null
+        }, 
+        {
+            "id" : "1137598392934512",
+            "name" : "Beatriz M Ribeiro",
+            "category" : null
+        }, 
+        {
+            "id" : "10204648050497061",
+            "name" : "Lilian Morais",
+            "category" : null
+        }, 
+        {
+            "id" : "1015445361799649",
+            "name" : "Priscila Augusta Scatena",
+            "category" : null
+        }, 
+        {
+            "id" : "1021917024515658",
+            "name" : "Matheus de Cassio",
+            "category" : null
+        }, 
+        {
+            "id" : "963109787075103",
+            "name" : "Vítor Albuquerque M. Ribeiro",
+            "category" : null
+        }, 
+        {
+            "id" : "1633567586915504",
+            "name" : "Lilian Rodrigues",
+            "category" : null
+        }, 
+        {
+            "id" : "778569095574842",
+            "name" : "Guilherme Lacerda",
+            "category" : null
+        }, 
+        {
+            "id" : "681807368590559",
+            "name" : "Gilberto da Silva",
+            "category" : null
+        }, 
+        {
+            "id" : "1665056856966541",
+            "name" : "Adriana S. Eduardo",
+            "category" : null
+        }, 
+        {
+            "id" : "10153591655034341",
+            "name" : "Simone Couyumjian",
+            "category" : null
+        }, 
+        {
+            "id" : "1032242443473570",
+            "name" : "Na Ta",
+            "category" : null
+        }, 
+        {
+            "id" : "486732681480511",
+            "name" : "Aline Cunha",
+            "category" : null
+        }, 
+        {
+            "id" : "506335516187357",
+            "name" : "Alessandro da Silva",
+            "category" : null
+        }, 
+        {
+            "id" : "10201024847219837",
+            "name" : "Edson Gomes da Silva",
+            "category" : null
+        }, 
+        {
+            "id" : "607663312705673",
+            "name" : "Renata Domingues",
+            "category" : null
+        }, 
+        {
+            "id" : "951383861601087",
+            "name" : "Juliana Lopes",
+            "category" : null
+        }, 
+        {
+            "id" : "10206817160051085",
+            "name" : "Marina Fuess Nishimura",
+            "category" : null
+        }, 
+        {
+            "id" : "157850344563094",
+            "name" : "Lenita Matos",
+            "category" : null
+        }, 
+        {
+            "id" : "1105366009492261",
+            "name" : "Cecilia Araujo",
+            "category" : null
+        }, 
+        {
+            "id" : "1154523797897560",
+            "name" : "Pepe Lennon",
+            "category" : null
+        }, 
+        {
+            "id" : "1499365790391456",
+            "name" : "Gilson Oliveira",
+            "category" : null
+        }, 
+        {
+            "id" : "881232725302423",
+            "name" : "Hosana Barbosa",
+            "category" : null
+        }, 
+        {
+            "id" : "858043997645528",
+            "name" : "Renata Falgetano Rodrigues",
+            "category" : null
+        }, 
+        {
+            "id" : "853950004693452",
+            "name" : "Jose Helson Helson",
+            "category" : null
+        }, 
+        {
+            "id" : "1156020557756769",
+            "name" : "Emilio Murari",
+            "category" : null
+        }, 
+        {
+            "id" : "1542799625940551",
+            "name" : "Gilberto Urbano de Araujo",
+            "category" : null
+        }, 
+        {
+            "id" : "903300373059893",
+            "name" : "Gabriel Lopes Galvani",
+            "category" : null
+        }, 
+        {
+            "id" : "373328342871678",
+            "name" : "Silvio Zambotto",
+            "category" : null
+        }, 
+        {
+            "id" : "719961304795921",
+            "name" : "Cecil Marcil Da Silva",
+            "category" : null
+        }, 
+        {
+            "id" : "618040664999744",
+            "name" : "Dhiancarlo De Oliveira Miranda",
+            "category" : null
+        }, 
+        {
+            "id" : "1010895888921002",
+            "name" : "Edu Silva",
+            "category" : null
+        }, 
+        {
+            "id" : "131648797191547",
+            "name" : "Mafalda Aparecida",
+            "category" : null
+        }, 
+        {
+            "id" : "1495279817467088",
+            "name" : "Paulo Cris Bueno",
+            "category" : null
+        }, 
+        {
+            "id" : "402178099974580",
+            "name" : "Rose Pereira",
+            "category" : null
+        }, 
+        {
+            "id" : "862542197172585",
+            "name" : "Mi Brito",
+            "category" : null
+        }, 
+        {
+            "id" : "841292115952931",
+            "name" : "Pedro Saraiva",
+            "category" : null
+        }, 
+        {
+            "id" : "10205722378596543",
+            "name" : "Luiz Fernando Teixeira Da Silva",
+            "category" : null
+        }, 
+        {
+            "id" : "1190188817673422",
+            "name" : "Bruno Antonelli",
+            "category" : null
+        }, 
+        {
+            "id" : "848315148577085",
+            "name" : "Nathalie Santana",
+            "category" : null
+        }
+    ],
+    "likes_count" : 67,
+    "full_picture" : "https://fbexternal-a.akamaihd.net/safe_image.php?d=AQAqKmyBdLBYLsIH&url=http%3A%2F%2Ff.i.uol.com.br%2Ffotografia%2F2015%2F10%2F18%2F558845-970x600-1.jpeg",
+    "type" : "link",
+    "story" : null,
+    "status_type" : "shared_story",
+    "shares_count" : 4,
+    "icon" : {
+        "file" : "/images/icons/post.gif",
+        "authority" : "www.facebook.com",
+        "host" : "www.facebook.com",
+        "path" : "/images/icons/post.gif",
+        "protocol" : "https",
+        "query" : null,
+        "ref" : null,
+        "user_info" : null,
+        "real_icon" : "https://www.facebook.com/images/icons/post.gif"
+    },
+    "link" : {
+        "file" : "/saopaulo/hoje/2015/10/1698230-em-funcao-do-enem-paulista-fecha-para-carros-mais-tarde-neste-domingo.shtml?cmpid=facefolha",
+        "authority" : "www1.folha.uol.com.br",
+        "host" : "www1.folha.uol.com.br",
+        "path" : "/saopaulo/hoje/2015/10/1698230-em-funcao-do-enem-paulista-fecha-para-carros-mais-tarde-neste-domingo.shtml",
+        "protocol" : "http",
+        "query" : "cmpid=facefolha",
+        "ref" : null,
+        "user_info" : null,
+        "real_link" : "http://www1.folha.uol.com.br/saopaulo/hoje/2015/10/1698230-em-funcao-do-enem-paulista-fecha-para-carros-mais-tarde-neste-domingo.shtml?cmpid=facefolha"
+    },
+    "picture" : {
+        "file" : "/safe_image.php?d=AQADoCdu11hH6Vgm&w=130&h=130&url=http%3A%2F%2Ff.i.uol.com.br%2Ffotografia%2F2015%2F10%2F18%2F558845-970x600-1.jpeg&cfs=1",
+        "authority" : "fbexternal-a.akamaihd.net",
+        "host" : "fbexternal-a.akamaihd.net",
+        "path" : "/safe_image.php",
+        "protocol" : "https",
+        "query" : "d=AQADoCdu11hH6Vgm&w=130&h=130&url=http%3A%2F%2Ff.i.uol.com.br%2Ffotografia%2F2015%2F10%2F18%2F558845-970x600-1.jpeg&cfs=1",
+        "ref" : null,
+        "user_info" : null,
+        "real_picture" : "https://fbexternal-a.akamaihd.net/safe_image.php?d=AQADoCdu11hH6Vgm&w=130&h=130&url=http%3A%2F%2Ff.i.uol.com.br%2Ffotografia%2F2015%2F10%2F18%2F558845-970x600-1.jpeg&cfs=1"
+    },
+    "properties" : [],
+    "with_tags" : [],
+    "message_tags" : [ 
+        {
+            "created_time_ms" : 0,
+            "id" : "143977995665337",
+            "name" : "Revista sãopaulo",
+            "type" : "page",
+            "offset" : "17"
+        }
+    ],
+    "scheduled_publish_time_ms" : 0,
+    "updated_time" : ISODate("2015-10-25T09:25:00.000Z"),
+    "updated_time_ms" : NumberLong(1445765100000),
+    "created_time" : ISODate("2015-10-25T09:25:00.000Z"),
+    "created_time_ms" : NumberLong(1445765100000),
+    "api_inf" : {
+        "api_version" : "2.3",
+        "api_code" : "facebook4j-core-2.2.1.jar",
+        "account_name" : "Malini"
+    },
+    "collect_at" : NumberLong(1445837398210)
+}
