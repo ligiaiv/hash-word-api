@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 METHODS = {
   'top_words' : {
     'description' : 'top_words parses the most occurent words in the database in the requested period,<br> \

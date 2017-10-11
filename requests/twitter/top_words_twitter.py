@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """
@@ -38,7 +37,7 @@ Returns list of top words plus count.
   # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   db_cursor = collect.aggregate(parameters)
 
-  print('Retweets texts acquired: %s'% db_cursor.count())
+  print('Retweets texts acquired')
   
   for doc in db_cursor:
     text = doc['retweeted_status']['text']
@@ -66,7 +65,7 @@ Returns list of top words plus count.
     FILTER['status.retweeted_status'] = {'$exists':False}
 
     db_cursor = collect.find(FILTER, projection)
-    print('nTweets texts acquired: %s'% db_cursor.count())
+    print('nTweets texts acquired'% db_cursor.count())
     
     for doc in db_cursor:
       text = doc['status']['text']
