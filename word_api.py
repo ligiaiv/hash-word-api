@@ -88,8 +88,6 @@ def parse_filter_cache(method, cache, _filter='', plataform=''):
 
       _filter = dumps(FILTER)
 
-  print(FILTER)
-  # _filter is ready
   try:
     lte = datetime.datetime.strptime(FILTER['where']['status.created_at']['lte'], '%Y-%m-%dT%H:%M:%S.%f')
     gte = datetime.datetime.strptime(FILTER['where']['status.created_at']['gte'], '%Y-%m-%dT%H:%M:%S.%f')
@@ -113,7 +111,6 @@ def parse_filter_cache(method, cache, _filter='', plataform=''):
 
     except Exception:
       raise NameError('Missing or wrong interval.')
-  
 
 
   _id_ = parse_url_id(method, _filter, plataform)
@@ -129,7 +126,10 @@ def parse_filter_cache(method, cache, _filter='', plataform=''):
   FILTER['period'] = _delta
 
   # remove blocked posts
-  FILTER['where']['block'] = False # {'$exists': False, '$ne': True}
+  # FILTER['where']['block'] = False
+  
+  print(FILTER)
+  # _filter is ready
   return FILTER
 
 

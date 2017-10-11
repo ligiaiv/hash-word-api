@@ -29,36 +29,36 @@ def read_from_url(url):
 
 def parse_word(collect, FILTER, projection, SKIP,LIMIT, parameters, RECENT):
   """
-Returns list of top words plus count.
+  Returns list of top words plus count.
   """
+  print('FILTER: \n%s'%parameters)
+  print('db parameters: \n%s'%parameters)
   word_count = {}
   top = []
 
-  # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  db_cursor = collect.aggregate(parameters)
+  if RECENT:
+    db_cursor = collect.aggregate(parameters)
+    print('Retweets texts acquired')
+    
+    for doc in db_cursor:
+      text = doc['retweeted_status']['text']
+      rt_count = doc['count']
 
-  print('Retweets texts acquired')
-  
-  for doc in db_cursor:
-    text = doc['retweeted_status']['text']
-    rt_count = doc['count']
+      tmp = clear_text(text)
 
-    tmp = clear_text(text)
-
-    # creates a word count
-    temp_words = []
-    for word in tmp:
-      if word not in temp_words:
-        temp_words.append(word)
-        try:
-          word_count[filtered(word)] += rt_count
-      
-        except KeyError:
-          word_count[filtered(word)] = rt_count
-      else:
-        # count words only once
-        pass
-
+      # creates a word count
+      temp_words = []
+      for word in tmp:
+        if word not in temp_words:
+          temp_words.append(word)
+          try:
+            word_count[filtered(word)] += rt_count
+        
+          except KeyError:
+            word_count[filtered(word)] = rt_count
+        else:
+          # count words only once
+          pass
   if not RECENT:
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # MongoDB find
