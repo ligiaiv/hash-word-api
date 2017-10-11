@@ -67,7 +67,7 @@ def parse_filter_cache(method, cache, _filter='', plataform=''):
         raise NameError('Parameters Missing: ' + str(required_missing))
 
       # parse input
-      print(parameters)
+      print('parameters %s'%parameters)
 
       try:
         FILTER['where'] = {}
