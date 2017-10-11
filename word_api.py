@@ -45,7 +45,7 @@ def parse_filter_cache(method, cache, _filter='', plataform=''):
       parameters = METHODS[method]['parameters'].copy()
       required_missing = []
       for param in parameters:
-        query_parameter = request.query.getlist(param)
+        query_parameter = request.query.getall(param)
         
         if not query_parameter and parameters[param]['required']:
           required_missing.append(param)
