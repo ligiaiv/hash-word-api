@@ -1,20 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""
-"""
-
 import sys, string, csv, os, json
 import datetime
 import time
-from bson import json_util
+from json import loads, dumps
 
-sys.path.append('./libs')
-from lib_output import *
-from lib_text import is_stopword
-from lib_text import remove_latin_accents
-from lib_text import is_hashtag
-from lib_text import is_twitter_mention
+from bottle import request
 
 # import requests available and plataforms folders per method
 sys.path.append('./requests')
@@ -27,13 +19,9 @@ for method in METHODS:
       print('Appending to sys.path: ' + path)
 # cache
 sys.path.append('./cache')
-from cache_generator import parse_url_id, check_id_in_cache, cache_dict_ms
+from cache_generator import parse_url_id, check_id_in_cache, cache_dict_ms, insert_in_cache
 
 def parse_filter_cache(method, cache, _filter='', plataform=''):
-  from json import loads, dumps
-  from cache_requests import find_time_partition
-  from bottle import request
-
   _delta = None
   FILTER = {}
   
@@ -73,7 +61,7 @@ def parse_filter_cache(method, cache, _filter='', plataform=''):
         FILTER['where'] = {}
         FILTER['where']['period'] = parameters['period']
         if parameters.get('tags[]'):
-          FILTER['where']['categories'] = { '$all': parameters['tags[]'] }
+          FILTER['where']['keywords'] = { '$all': parameters['tags[]'] }
         if parameters.get('page') and parameters.get('per_page'):
           FILTER['limit'] = parameters['per_page']
           FILTER['skip'] = parameters['per_page']*(parameters['page'] - 1)
@@ -137,11 +125,6 @@ def word_api_request(_url_ = '', db=None, method='', plataform=''):
   """
   For request parameters. Gets the type of request and returns the correct response.
   """
-  # parse the collect, if received or instanciated before
-  # if FILTER['data'] exists, the data was in cache
-  from json import dumps
-  from cache_generator import insert_in_cache
-  from url_request import read_from_url
 
   response = None
   
