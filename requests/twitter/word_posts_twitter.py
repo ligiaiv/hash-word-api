@@ -113,13 +113,13 @@ def parse_method(collect, FILTER):
         raise NameError(str(why))
 
     try:
-      FILTER['categories']['$in'] = FILTER['categories'].pop('inq')
+      FILTER['keywords']['$in'] = FILTER['categories'].pop('inq')
     except Exception:
       pass
     
     # Newly Implemented $all operator
     try:
-      FILTER['categories']['$all'] = FILTER['categories'].pop('all')
+      FILTER['keywords']['$all'] = FILTER['categories'].pop('all')
     except Exception:
       pass
 

@@ -109,13 +109,13 @@ def parse_method(collect, FILTER):
 
 
     try:
-      FILTER['categories']['$in'] = FILTER['categories'].pop('inq')
+      FILTER['keywords']['$in'] = FILTER['categories'].pop('inq')
     except Exception:
       pass
     
     # Newly Implemented $all operator
     try:
-      FILTER['categories']['$all'] = FILTER['categories'].pop('all')
+      FILTER['keywords']['$all'] = FILTER['categories'].pop('all')
     except Exception:
       pass
 
@@ -128,11 +128,11 @@ def parse_method(collect, FILTER):
       parameters.append({"$limit": LIMIT})
       parameters.append({"$skip": SKIP})
 
-    parameters.append({"$unwind": '$categories'})
+    parameters.append({"$unwind": '$keywords'})
 
     parameters.append({
       "$group": {
-        "_id": { "name": '$categories' },
+        "_id": { "name": '$keywords' },
         "count": { "$sum": 1 }
       }
     })
