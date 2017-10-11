@@ -65,7 +65,7 @@ Returns list of top words plus count.
     FILTER['status.retweeted_status'] = {'$exists':False}
 
     db_cursor = collect.find(FILTER, projection)
-    print('nTweets texts acquired'% db_cursor.count())
+    print('Tweets texts acquired: %s'% db_cursor.count())
     
     for doc in db_cursor:
       text = doc['status']['text']
