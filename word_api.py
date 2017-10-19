@@ -24,16 +24,20 @@ from cache_generator import parse_url_id, check_id_in_cache, cache_dict_ms, inse
 def parse_filter_cache(method, cache, _filter='', plataform=''):
   _delta = None
   FILTER = {}
+  # remove blocked posts
+  # FILTER['where']['block'] = False
   
   if not _filter:
     try:
       _filter = request.query.get('filter')
       FILTER = loads(_filter)
     except Exception:
-      parameters = METHODS[method]['parameters'].copy()
       required_missing = []
+      parameters = METHODS[method]['parameters'].copy()
+      print('parameters %s'%parameters)
+      
       for param in parameters:
-        query_parameter = request.query.getall(param)
+        query_parameter = request.query.decode().getall(param)
         
         if not query_parameter and parameters[param]['required']:
           required_missing.append(param)
@@ -55,7 +59,6 @@ def parse_filter_cache(method, cache, _filter='', plataform=''):
         raise NameError('Parameters Missing: ' + str(required_missing))
 
       # parse input
-      print('parameters %s'%parameters)
 
       try:
         FILTER['where'] = {}
@@ -113,10 +116,7 @@ def parse_filter_cache(method, cache, _filter='', plataform=''):
   FILTER['id'] = _id_
   FILTER['period'] = _delta
 
-  # remove blocked posts
-  # FILTER['where']['block'] = False
-  
-  print(FILTER)
+  print('FITLER:\n%s'%FILTER)
   # _filter is ready
   return FILTER
 

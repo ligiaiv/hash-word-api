@@ -8,6 +8,8 @@ import sys, string, csv, os, json
 import pymongo
 import datetime
 import time
+from json import dumps
+
 from bson import json_util
 from word_api import word_api_request
 
@@ -119,9 +121,6 @@ def setup_db():
 @route('/<plataform>/<method>')
 @enable_cors
 def parsed(plataform, method):
-  from json import dumps
-
-  print('Request: ' + plataform + '/' + method)
   if method not in METHODS:
     return 'Method ' + method + ' nonexistent.'
   if plataform not in METHODS[method]['plataforms']:
