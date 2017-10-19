@@ -110,8 +110,8 @@ def parse_method(collect, FILTER):
     except Exception:
       pass
 
-    FILTER.pop('block')
-    print(FILTER)
+    # FILTER.pop('block')
+    # print(FILTER)
     # sets a projection to return
     parameters = []
     parameters.append({
