@@ -1,20 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-"""
-"""
-
-import sys
-
-# sys.path.append('./libs')
-from lib_text import remove_latin_accents
-
-import datetime, string
+import datetime
 from operator import itemgetter
-from bottle import request
 
 from lib_text2 import punct_translate_tab as punct_tab
 from lib_text2 import filtered
+
 
 def parse_img_per_word_face(collect, parameters, RECENT, LIMIT, SKIP):
   word = parameters[0]['$match'].pop('word')
@@ -46,13 +37,8 @@ def parse_img_per_word_face(collect, parameters, RECENT, LIMIT, SKIP):
   return output
 
 def parse_method(collect, FILTER):
-  # from json import loads
-
-  # Dictionary for returning Data
   return_dict = {}
   parameters = []
-
-  # Default Code
   code = 200
   message = 'Done'
 
@@ -104,25 +90,14 @@ def parse_method(collect, FILTER):
 
     # sets a projection to return
     parameters = []
-    parameters.append({
-      "$match" : FILTER
-      })
-
-    parameters.append({
-        "$sort": { "likes_count": -1 }
-        })
+    parameters.append({'$match': FILTER})
+    parameters.append({'$sort': { 'likes_count': -1 }})
 
     if RECENT:
-      parameters.append({
-        "$limit": LIMIT
-        })
-      parameters.append({
-          "$skip": SKIP
-          })
-    if not RECENT:
-      parameters.append({
-        "$limit": 10*(LIMIT+SKIP)
-        })
+      parameters.append({'$limit': LIMIT})
+      parameters.append({'$skip': SKIP})
+    else:
+      parameters.append({'$limit': 10*(LIMIT+SKIP)})
 
     try:
       return_dict['data'] = parse_img_per_word_face(collect, parameters, RECENT, LIMIT, SKIP)
@@ -139,5 +114,4 @@ def parse_method(collect, FILTER):
     return_dict['meta'] = { 'code': code, 'message': message}
     return return_dict['meta']
   else:
-    # json_util solves bson data_type issue
     return return_dict['data']

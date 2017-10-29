@@ -36,10 +36,10 @@ cache_dict_ms['1d']  =  1 * 24 * 60 * 60 * 1000
 cache_dict_ms['7d']  =  7 * 24 * 60 * 60 * 1000
 cache_dict_ms['15d'] = 15 * 24 * 60 * 60 * 1000
 
+
 def parse_url_id(_type, FILTER, plataform):
-  """
-  """
   return str(plataform) + '/' + str(_type) + '?filter=' + str(FILTER)
+
 
 def check_id_in_cache(cache, url_id, request_time):
   """
@@ -59,9 +59,9 @@ def check_id_in_cache(cache, url_id, request_time):
 
   db_cursor = cache.find({
                 'url_id': {
-                '$in' : query
+                '$in': [query]
                 }
-                })
+              })
 
   for doc in db_cursor:
     response = doc['data']
@@ -103,9 +103,9 @@ def insert_in_cache(cache, url_id, data, request_time):
 
   db_cursor = cache.find({
                 'url_id': {
-                '$in' : query
+                '$in' : [query]
                 }
-                })
+              })
 
   for doc in db_cursor:
     response.append(doc['data'])
@@ -113,7 +113,6 @@ def insert_in_cache(cache, url_id, data, request_time):
   db_cursor.close()
 
   if not response:
-    
     now = datetime.utcnow()
     print(now)
     

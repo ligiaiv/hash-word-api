@@ -1,28 +1,7 @@
 # -*- coding: utf-8 -*-
-
-"""
-"""
-
-import sys, string, csv, os, json
-import pymongo
 import datetime
-import time
-from bson import json_util
-from json import loads
-
-# sys.path.append('./libs')
-from lib_output import *
-from lib_text import is_stopword
-from lib_text import remove_latin_accents
-from lib_text import is_hashtag
-from lib_text import is_twitter_mention
-
-# sys.path.append('./requests')
-from map_volume_twitter import *
-
 from operator import itemgetter
-import bottle
-from bottle import route, run, template, get, request, post, response
+
 
 def parse_territory(collect, parameters):
   control = 0
@@ -64,12 +43,8 @@ def parse_territory(collect, parameters):
   return output
 
 def parse_method(collect, FILTER):
-
-  # Dictionary for returning Data
   return_dict = {}
   parameters = []
-
-  # Default Code
   code = 200
   message = 'Done'
 
@@ -128,24 +103,20 @@ def parse_method(collect, FILTER):
       parameters.append({"$skip": SKIP})
 
     parameters.append({"$unwind": '$keywords'})
-
     parameters.append({
       "$group": {
         "_id": { "name": '$keywords' },
         "count": { "$sum": 1 }
       }
     })
-
     parameters.append({"$sort": { "count": -1 }})
-
     parameters.append({
-        "$project": {
-          "_id": 0,
-          "name": '$_id.name',
-          "count": '$count'}
-        })
-    print(FILTER)
-    print(parameters)
+      "$project": {
+        "_id": 0,
+        "name": '$_id.name',
+        "count": '$count'
+      }
+    })
 
     try:
       return_dict['data'] = parse_territory(collect, parameters)
@@ -161,6 +132,5 @@ def parse_method(collect, FILTER):
     return_dict['meta'] = { 'code': code, 'message': message}
     return return_dict['meta']
   else:
-    # json_util solves bson data_type issue
     return return_dict['data']
     

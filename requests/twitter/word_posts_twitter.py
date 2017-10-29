@@ -1,16 +1,6 @@
 # -*- coding: utf-8 -*-
-
-"""
-"""
-
-import sys
-
-# sys.path.append('./libs')
-from lib_text import remove_latin_accents
-
-import datetime, string
+import datetime
 from operator import itemgetter
-from bottle import request
 
 from lib_text2 import punct_translate_tab as punct_tab
 from lib_text2 import filtered

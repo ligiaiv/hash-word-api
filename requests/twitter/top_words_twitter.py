@@ -1,36 +1,24 @@
 # -*- coding: utf-8 -*-
-
-"""
-"""
-
-import sys, string, csv, os, json
-
-import re
-
-import pymongo
+import json
+import urllib.request as request
 import datetime
 from bson import json_util
 
-from lib_text import is_stopword
-from lib_text import remove_latin_accents
-from lib_text import is_hashtag
-from lib_text import is_twitter_mention
-from lib_text2 import punct_translate_tab as punct_tab
-from lib_text2 import dual_mean, filtered, isNumber, word_remove_list, word_start, word_in, clear_text
+from lib_text2 import filtered, clear_text
+
 
 def read_from_url(url):
-  import urllib.request as request
-  import json
   response = request.urlopen(url)
   raw = response.read()
   data = json.loads(raw.decode())
 
-  return dumps(data, indent=4, default=json_util.default)
+  return json.dumps(data, indent=4, default=json_util.default)
+
 
 def parse_word(collect, FILTER, projection, SKIP,LIMIT, parameters, RECENT):
-  """
+  '''
   Returns list of top words plus count.
-  """
+  '''
   print('FILTER: \n%s'%parameters)
   print('db parameters: \n%s'%parameters)
   word_count = {}
@@ -59,6 +47,7 @@ def parse_word(collect, FILTER, projection, SKIP,LIMIT, parameters, RECENT):
         else:
           # count words only once
           pass
+  
   if not RECENT:
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # MongoDB find
@@ -94,9 +83,7 @@ def parse_word(collect, FILTER, projection, SKIP,LIMIT, parameters, RECENT):
     top.append([word, word_count[word]])
   
   top = sorted(top, key=lambda x: x[1], reverse=True)
-  # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   top = top[SKIP:SKIP+LIMIT] # pagination implementation
-  
   top_list = []
   
   for item in top:
@@ -105,12 +92,7 @@ def parse_word(collect, FILTER, projection, SKIP,LIMIT, parameters, RECENT):
   return top_list
 
 def parse_method(collect, FILTER):
-  from json import dumps, loads
-
-  # Dictionary for returning Data
   return_dict = {}
-
-  # Default Code
   code = 200
   message = 'Done'
 
@@ -161,41 +143,36 @@ def parse_method(collect, FILTER):
     FILTER['status.retweeted_status'] = {'$exists':True}
 
     parameters = []
-    parameters.append({
-      "$match" : FILTER
-      })
+    parameters.append({'$match' : FILTER})
+    
     if RECENT:
-      parameters.append({
-        "$limit": LIMIT
-        })
-      parameters.append({
-          "$skip": SKIP
-          })
+      parameters.append({'$limit': LIMIT})
+      parameters.append({'$skip': SKIP})
 
     parameters.append({
-        "$group": {
-            "_id": { "id_str": '$status.retweeted_status.id_str' },
-                "retweeted_status": { "$last": '$status.retweeted_status' },
-            "count": { "$sum": 1 }
-        }
-        })
+      '$group': {
+        '_id': { 
+          'id_str': '$status.retweeted_status.id_str' 
+        },
+        'retweeted_status': { 
+          '$last': '$status.retweeted_status' 
+        },
+        'count': { '$sum': 1 }
+      }
+    })
     parameters.append({
-        "$sort": { "count": -1 }
-        })
-
+      '$sort': { 'count': -1 }
+    })
     parameters.append({
-        "$project": {
-          "_id": 0,
-          "retweeted_status.text": '$retweeted_status.text',
-          "count":"$count"
-          }
-        })
-
+      '$project': {
+        '_id': 0,
+        'retweeted_status.text': '$retweeted_status.text',
+        'count':'$count'
+      }
+    })
          
     try:
-      
       return_dict['data'] = parse_word(collect, FILTER, projection, SKIP,LIMIT, parameters, RECENT)
-
     except Exception as _why:
       print('DB Error: ' + str(_why))
       code = 408
@@ -210,5 +187,4 @@ def parse_method(collect, FILTER):
     return_dict['meta'] = { 'code': code, 'message': message}
     return return_dict['meta']
   else:
-    # json_util solves bson data_type issue
     return return_dict['data']

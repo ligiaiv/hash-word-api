@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys, string, csv, os, json
+import sys
 import datetime
-import time
 from json import loads, dumps
 
 from bottle import request
@@ -29,7 +28,7 @@ def parse_filter_cache(method, cache, _filter='', plataform=''):
   
   if not _filter:
     try:
-      _filter = request.query.get('filter')
+      _filter = request.query.decode().get('filter')
       FILTER = loads(_filter)
     except Exception:
       required_missing = []
@@ -125,7 +124,6 @@ def word_api_request(_url_ = '', db=None, method='', plataform=''):
   """
   For request parameters. Gets the type of request and returns the correct response.
   """
-
   response = None
   
   # when a url is sent, it is a request from the cache generator

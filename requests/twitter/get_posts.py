@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
-
-"""
-"""
-
 import sys, string, csv, os, json
+from json import dumps
 
 def get_posts_from_list(collect, FILTER, projection):
   """
-Returns posts from a list of ids.
+  Returns posts from a list of ids.
   """
   return_list = []
 
@@ -20,26 +17,17 @@ Returns posts from a list of ids.
 
   return return_list
 
+
 def get_posts(collect, FILTER):
-  from json import dumps
-  # from bottle import request
-
-  # Dictionary for returning Data
   return_dict = {}
-
-  # Default Code
   code = 200
   message = 'Done'
 
   try:
-    # read the query input values
-    # FILTER = loads(request.query.get('filter'))
     FILTER = FILTER['where']
-
     id_list = FILTER.pop('id_list')
-    # print(id_list)
-
     _id_list = []
+    
     for _id in id_list:
       if _id.startswith('I'):
         _id_list.append(_id.split('I')[1])

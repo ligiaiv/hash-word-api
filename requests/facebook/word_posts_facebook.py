@@ -1,22 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-"""
-"""
-import sys
-
-from lib_text import remove_latin_accents
-
-import datetime, string
+import datetime
 from operator import itemgetter
-from bottle import request
 
 from lib_text2 import punct_translate_tab as punct_tab
 from lib_text2 import filtered
 
+
 def parse_post_per_word_face(collect, parameters, RECENT, LIMIT, SKIP):
   word = parameters[0]['$match'].pop('word')
-
   output = []
 
   # MongoDB find
@@ -24,7 +16,6 @@ def parse_post_per_word_face(collect, parameters, RECENT, LIMIT, SKIP):
   print('\nData acquired.\n')
 
   for doc in db_cursor:
-    # print(doc)
     text = doc['message']
     
     if not text:
@@ -38,19 +29,14 @@ def parse_post_per_word_face(collect, parameters, RECENT, LIMIT, SKIP):
       output.append(doc)
 
   output = sorted(output, key=itemgetter('likes_count'), reverse=True)
-  # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   output = output[SKIP:SKIP+LIMIT] # pagination implementation
 
   return output
 
-def parse_method(collect, FILTER):
-  # from json import loads
 
-  # Dictionary for returning Data
+def parse_method(collect, FILTER):
   return_dict = {}
   parameters = []
-
-  # Default Code
   code = 200
   message = 'Done'
 
@@ -101,25 +87,15 @@ def parse_method(collect, FILTER):
 
     # sets a projection to return
     parameters = []
-    parameters.append({
-      "$match" : FILTER
-      })
+    parameters.append({'$match' : FILTER})
 
-    parameters.append({
-        "$sort": { "likes_count": -1 }
-        })
+    parameters.append({'$sort': { 'likes_count': -1 }})
 
     if RECENT:
-      parameters.append({
-        "$limit": LIMIT
-        })
-      parameters.append({
-          "$skip": SKIP
-          })
-    if not RECENT:
-      parameters.append({
-        "$limit": 10*(LIMIT+SKIP)
-        })
+      parameters.append({'$limit': LIMIT})
+      parameters.append({'$skip': SKIP})
+    else:
+      parameters.append({'$limit': 10*(LIMIT+SKIP)})
 
     try:
       return_dict['data'] = parse_post_per_word_face(collect, parameters, RECENT, LIMIT, SKIP)

@@ -2,22 +2,17 @@
 
 import sys
 
-from lib_text import remove_latin_accents
-
-import datetime, string
-from operator import itemgetter
-from bottle import request
+import datetime
 
 from lib_text2 import punct_translate_tab as punct_tab
 from lib_text2 import filtered
 
 def parse_post_per_word_no_rt(collect, parameters):
   """
-Returns list of tweets per word.
+  Returns list of tweets per word.
   """
 
   word = parameters[0]['$match'].pop('word')
-  
   output = []
 
   # MongoDB find
@@ -26,7 +21,6 @@ Returns list of tweets per word.
 
   for doc in db_cursor:
     text = doc['status']['text']
-
     tmp_text = filtered(text)
     tmp_text = tmp_text.translate(punct_tab)
     tmp_text = tmp_text.split(' ')
@@ -37,9 +31,6 @@ Returns list of tweets per word.
   return output
 
 def parse_word_posts_no_rt(collect, FILTER):
-  # from json import loads
-
-  # Dictionary for returning Data
   return_dict = {}
   parameters = []
 
@@ -48,9 +39,6 @@ def parse_word_posts_no_rt(collect, FILTER):
   message = 'Done'
 
   try:
-    # read the query input values
-    # FILTER = loads(request.query.get('filter'))
-
     try:
       LIMIT = FILTER['limit']
     except Exception:
@@ -100,30 +88,28 @@ def parse_word_posts_no_rt(collect, FILTER):
     parameters.append({
       "$match" : FILTER
       })
-
     parameters.append({
-        "$group": {
-            "_id": { "id_str": '$status.id_str' },
-                "status": { "$last": '$status' },
-            "count": { "$sum": 1 }
+      "$group": {
+          "_id": { "id_str": '$status.id_str' },
+              "status": { "$last": '$status' },
+          "count": { "$sum": 1 }
+      }
+    })
+    parameters.append({
+      "$sort": { "count": -1 }
+    })
+    parameters.append({
+      "$project": {
+        "_id": "$status.id_str",
+        "status": '$status'
         }
-        })
+    })
     parameters.append({
-        "$sort": { "count": -1 }
-        })
-
+      "$limit": LIMIT
+    })
     parameters.append({
-        "$project": {
-          "_id": "$status.id_str",
-          "status": '$status'
-          }
-        })
-    parameters.append({
-          "$limit": LIMIT
-        })
-    parameters.append({
-         "$skip": SKIP
-        })
+      "$skip": SKIP
+    })
 
     try:
       return_dict['data'] = parse_post_per_word_no_rt(collect, parameters)

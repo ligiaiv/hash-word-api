@@ -1,23 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-"""
-"""
-
-import sys, string, csv, os, json
-
-import re
-
-import pymongo
 import datetime
-from bson import json_util
 
-from lib_text import is_stopword
-from lib_text import remove_latin_accents
-from lib_text import is_hashtag
-from lib_text import is_twitter_mention
-from lib_text2 import punct_translate_tab as punct_tab
-from lib_text2 import dual_mean, filtered, isNumber, word_remove_list, word_start, word_in, clear_text
+from lib_text2 import filtered, clear_text
+
 
 def parse_word_face(collect, FILTER, SKIP,LIMIT, parameters, RECENT):
   word_count = {}
@@ -46,9 +32,7 @@ def parse_word_face(collect, FILTER, SKIP,LIMIT, parameters, RECENT):
     top.append([word, word_count[word]])
   
   top = sorted(top, key=lambda x: x[1], reverse=True)
-  # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   top = top[SKIP:SKIP+LIMIT] # pagination implementation
-
   top_list = []
   
   for item in top:
@@ -57,13 +41,7 @@ def parse_word_face(collect, FILTER, SKIP,LIMIT, parameters, RECENT):
   return top_list
 
 def parse_method(collect, FILTER):
-  from json import dumps, loads
-  # from bottle import request
-
-  # Dictionary for returning Data
   return_dict = {}
-
-  # Default Code
   code = 200
   message = 'Done'
 
@@ -110,33 +88,24 @@ def parse_method(collect, FILTER):
     except Exception:
       pass
 
-    # FILTER.pop('block')
-    # print(FILTER)
-    # sets a projection to return
     parameters = []
+    parameters.append({'$match': FILTER})
     parameters.append({
-      "$match" : FILTER
-      })
+      '$group': {
+          '_id': { '_id': '$_id' },
+          'message': { '$last': '$message' },
+      }
+    })
+    parameters.append({
+      '$project': {
+        '_id': 0,
+        'message': '$message',
+      }
+    })
 
-    parameters.append({
-        "$group": {
-            "_id": { "_id": '$_id' },
-                "message": { "$last": '$message' },
-        }
-        })
-    parameters.append({
-        "$project": {
-          "_id": 0,
-          "message": '$message',
-          }
-        })
     if RECENT:
-      parameters.append({
-        "$limit": LIMIT
-        })
-      parameters.append({
-          "$skip": SKIP
-          })
+      parameters.append({'$limit': LIMIT})
+      parameters.append({'$skip': SKIP})
 
     try:
       return_dict['data'] = parse_word_face(collect, FILTER, SKIP,LIMIT, parameters, RECENT)
@@ -155,5 +124,4 @@ def parse_method(collect, FILTER):
     return_dict['meta'] = { 'code': code, 'message': message}
     return return_dict['meta']
   else:
-    # json_util solves bson data_type issue
     return return_dict['data']

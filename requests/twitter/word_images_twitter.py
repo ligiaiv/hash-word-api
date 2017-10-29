@@ -1,27 +1,15 @@
 # -*- coding: utf-8 -*-
-
-"""
-"""
-
-import sys
-
-# sys.path.append('./libs')
-from lib_text import remove_latin_accents
-
-import datetime, string
-from operator import itemgetter
-from bottle import request
+import datetime
 
 from lib_text2 import punct_translate_tab as punct_tab
 from lib_text2 import filtered
 
 def parse_img_per_word(collect, FILTER, projection, SKIP,LIMIT, parameters, RECENT):
-  """
-Returns list of tweets per word.
-  """
+  '''
+  Returns list of tweets per word.
+  '''
 
-  word = parameters[0]['$match'].pop('word')
-  
+  word = parameters[0]['$match'].pop('word')  
   output = []
 
   # MongoDB aggreg
@@ -29,14 +17,12 @@ Returns list of tweets per word.
   print('\nRetweets acquired.\n')
 
   for doc in db_cursor:
-    # print(doc)
-    # input()
     text = doc['status']['retweeted_status']['text']
 
     tmp_text = filtered(text)
     tmp_text = tmp_text.translate(punct_tab)
     tmp_text = tmp_text.split(' ')
-    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    
     # RETWEETS
     if any(filtered(word)==filtered(w) for w in tmp_text):
       doc['media_url_https'] = doc['media_url_https'][0]
@@ -46,7 +32,6 @@ Returns list of tweets per word.
       doc.pop('status')
       output.append(doc)
 
-  # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # find for original tweets
   if len(output) < LIMIT+SKIP and not RECENT:
     FILTER['status.retweeted_status'] = {'$exists':False}
@@ -56,7 +41,6 @@ Returns list of tweets per word.
 
     for doc in db_cursor:
       text = doc['status']['text']
-
       tmp_text = filtered(text)
       tmp_text = tmp_text.translate(punct_tab)
       tmp_text = tmp_text.split(' ')
@@ -72,20 +56,14 @@ Returns list of tweets per word.
 
     db_cursor.close()
 
-
   output = sorted(output, key=itemgetter('count'), reverse=True)
   output = output[SKIP:SKIP+LIMIT] # pagination implementation
 
   return output
 
 def parse_method(collect, FILTER):
-  # from json import loads
-
-  # Dictionary for returning Data
   return_dict = {}
   parameters = []
-
-  # Default Code
   code = 200
   message = 'Done'
 
@@ -148,48 +126,38 @@ def parse_method(collect, FILTER):
     FILTER['status.entities.media.0'] = { '$exists': True }
 
 
-    parameters.append({
-      "$match" : FILTER
-      })
+    parameters.append({'$match' : FILTER})
     if RECENT:
-      parameters.append({
-        "$limit": LIMIT
-        })
-      parameters.append({
-          "$skip": SKIP
-          })
+      parameters.append({'$limit': LIMIT})
+      parameters.append({'$skip': SKIP})
 
     parameters.append({
-        "$group": {
-            "_id": { "id_str": '$status.retweeted_status.id_str' },
-        "status": { "$last": '$status' },
-                "user": { "$last": '$status.user' },
-                "retweeted_status": { "$last": '$status.retweeted_status' },
-                "media": { "$last": '$status.entities.media' },
-            "count": { "$sum": 1 }
-        }
-        })
+      '$group': {
+        '_id': { 'id_str': '$status.retweeted_status.id_str' },
+        'status': { '$last': '$status' },
+        'user': { '$last': '$status.user' },
+        'retweeted_status': { '$last': '$status.retweeted_status' },
+        'media': { '$last': '$status.entities.media' },
+        'count': { '$sum': 1 }
+      }
+    })
+    parameters.append({'$sort': { 'count': -1 }})
     parameters.append({
-        "$sort": { "count": -1 }
-        })
-
-    parameters.append({
-        "$project": {
-          "_id": "$retweeted_status.id_str",
-          "media_url_https": "$media.media_url_https",
-          "status.id" : "$status.id_str",
-          "status.timestamp_ms" : "$status.timestamp_ms",
-          "status.user": "$user",
-          "status.retweeted_status.id": '$retweeted_status.id_str',
-          "status.retweeted_status.user": '$retweeted_status.user',
-          "status.retweeted_status.text": '$retweeted_status.text',
-          "count": '$count'}
-        })
+      '$project': {
+        '_id': '$retweeted_status.id_str',
+        'media_url_https': '$media.media_url_https',
+        'status.id' : '$status.id_str',
+        'status.timestamp_ms' : '$status.timestamp_ms',
+        'status.user': '$user',
+        'status.retweeted_status.id': '$retweeted_status.id_str',
+        'status.retweeted_status.user': '$retweeted_status.user',
+        'status.retweeted_status.text': '$retweeted_status.text',
+        'count': '$count'
+      }
+    })
+    
     if not RECENT:
-      parameters.append({
-        "$limit": 10*(LIMIT+SKIP)
-        })
-
+      parameters.append({'$limit': 10*(LIMIT+SKIP)})
 
     try:
       return_dict['data'] = parse_img_per_word(collect, FILTER, projection, SKIP,LIMIT, parameters, RECENT)
