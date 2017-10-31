@@ -6,21 +6,17 @@ from lib_text2 import punct_translate_tab as punct_tab
 from lib_text2 import filtered
 
 def parse_post_per_word(collect, FILTER, projection, SKIP,LIMIT, parameters, RECENT):
-  """
-Returns list of tweets per word.
-  """
+  '''
+  Returns list of tweets per word.
+  '''
 
   word = parameters[0]['$match'].pop('word')
-  
   output = []
 
-  # MongoDB aggreg
   db_cursor = collect.aggregate(parameters)
   print('\nRetweets acquired.\n')
 
   for doc in db_cursor:
-    # print(doc)
-    # input()
     text = doc['status']['retweeted_status']['text']
 
     tmp_text = filtered(text)
@@ -30,7 +26,6 @@ Returns list of tweets per word.
     if any(filtered(word)==filtered(w) for w in tmp_text):
       output.append(doc)
 
-  # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # find for original tweets
   if len(output) < LIMIT+SKIP and not RECENT:
     FILTER['status.retweeted_status'] = {'$exists':False}
@@ -40,7 +35,6 @@ Returns list of tweets per word.
 
     for doc in db_cursor:
       text = doc['status']['text']
-
       tmp_text = filtered(text)
       tmp_text = tmp_text.translate(punct_tab)
       tmp_text = tmp_text.split(' ')
@@ -95,7 +89,6 @@ def parse_method(collect, FILTER):
         FILTER['status.created_at']['$lte'] = datetime.datetime.strptime(FILTER['status.created_at']['lte'], '%Y-%m-%dT%H:%M:%S.%f')
         FILTER['status.created_at'].pop('gte')
         FILTER['status.created_at'].pop('lte')
-
       except Exception as why:
         code = 400
         message = 'Invalid argument for Date: bad format or missing element.'
@@ -119,52 +112,40 @@ def parse_method(collect, FILTER):
       message = 'Invalid argument for Word: bad format or missing element.'
       raise NameError(str(why))
 
-    # sets a projection to return
-    projection = { 'status': 1  }
-
     FILTER['status.retweeted_status'] = {'$exists':True}
 
+    parameters.append({'$match' : FILTER})
     parameters.append({
-      "$match" : FILTER
-      })
+      '$group': {
+        '_id': { 'id_str': '$status.retweeted_status.id_str' },
+        'status': { '$last': '$status' },
+        'user': { '$last': '$status.user' },
+        'retweeted_status': { '$last': '$status.retweeted_status' },
+        'count': { '$sum': 1 }
+      }
+    })
+    parameters.append({'$sort': { 'count': -1 }})
+    parameters.append({
+      '$project': {
+        '_id': '$retweeted_status.id_str',
+        'status.id' : '$status.id_str',
+        'status.timestamp_ms' : '$status.timestamp_ms',
+        'status.user': '$user',
+        'status.retweeted_status.id': '$retweeted_status.id_str',
+        'status.retweeted_status.user': '$retweeted_status.user',
+        'status.retweeted_status.text': '$retweeted_status.text',
+        'count': '$count'
+      }
+    })
+
     if RECENT:
-      parameters.append({
-        "$limit": LIMIT
-        })
-      parameters.append({
-          "$skip": SKIP
-          })
-
-    parameters.append({
-        "$group": {
-            "_id": { "id_str": '$status.retweeted_status.id_str' },
-        "status": { "$last": '$status' },
-                "user": { "$last": '$status.user' },
-                "retweeted_status": { "$last": '$status.retweeted_status' },
-            "count": { "$sum": 1 }
-        }
-        })
-    parameters.append({
-        "$sort": { "count": -1 }
-        })
-
-    parameters.append({
-        "$project": {
-          "_id": "$retweeted_status.id_str",
-          "status.id" : "$status.id_str",
-          "status.timestamp_ms" : "$status.timestamp_ms",
-          "status.user": "$user",
-          "status.retweeted_status.id": '$retweeted_status.id_str',
-          "status.retweeted_status.user": '$retweeted_status.user',
-          "status.retweeted_status.text": '$retweeted_status.text',
-          "count": '$count'}
-        })
-    if not RECENT:
-      parameters.append({
-        "$limit": 10*(LIMIT+SKIP)
-        })
-
-
+      parameters.append({'$limit': LIMIT})
+      parameters.append({'$skip': SKIP})
+    else:
+      parameters.append({'$limit': 10*(LIMIT+SKIP)})
+    
+    projection = { 'status': 1  }
+    
     try:
       return_dict['data'] = parse_post_per_word(collect, FILTER, projection, SKIP,LIMIT, parameters, RECENT)
 
