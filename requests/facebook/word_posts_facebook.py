@@ -11,9 +11,7 @@ def parse_post_per_word_face(collect, parameters, RECENT, LIMIT, SKIP):
   word = parameters[0]['$match'].pop('word')
   output = []
 
-  # MongoDB find
   db_cursor = collect.aggregate(parameters)
-  print('\nData acquired.\n')
 
   for doc in db_cursor:
     text = doc['message']
@@ -41,22 +39,9 @@ def parse_method(collect, FILTER):
   message = 'Done'
 
   try:
-    # read the query input values
-    try:
-      LIMIT = int(FILTER['limit'])
-    except Exception:
-      LIMIT = 25
-
-    try:
-      SKIP = int(FILTER['skip'])
-    except Exception:
-      SKIP = 0
-
-    try:
-      RECENT = FILTER['recent']
-    except Exception:
-      RECENT = False
-
+    LIMIT = int(FILTER.get('limit', 25))
+    SKIP = int(FILTER.get('skip', 0))
+    RECENT = FILTER.get('recent', False)
     FILTER = FILTER['where']
     
     if not RECENT:  
@@ -77,7 +62,6 @@ def parse_method(collect, FILTER):
     except Exception:
       pass
     
-    # Newly Implemented $all operator
     try:
       FILTER['categories']['$all'] = FILTER['categories'].pop('all')
     except Exception:
@@ -85,10 +69,8 @@ def parse_method(collect, FILTER):
 
     # FILTER.pop('block')
 
-    # sets a projection to return
     parameters = []
     parameters.append({'$match' : FILTER})
-
     parameters.append({'$sort': { 'likes_count': -1 }})
 
     if RECENT:
@@ -99,7 +81,6 @@ def parse_method(collect, FILTER):
 
     try:
       return_dict['data'] = parse_post_per_word_face(collect, parameters, RECENT, LIMIT, SKIP)
-
     except Exception as _why:
       print('DB Error: ' + str(_why))
 

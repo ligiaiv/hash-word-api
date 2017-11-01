@@ -15,7 +15,6 @@ def parse_territory(collect, parameters):
       "SP","SE","TO"]
 
   db_cursor = collect.aggregate(parameters)
-  print('\nData acquired.\n')
 
   for item in db_cursor:
     if item['name'].startswith('territorio-'):
@@ -49,22 +48,9 @@ def parse_method(collect, FILTER):
   message = 'Done'
 
   try:
-    # read the query input values
-    try:
-      LIMIT = int(FILTER['limit'])
-    except Exception:
-      LIMIT = 25
-
-    try:
-      SKIP = int(FILTER['skip'])
-    except Exception:
-      SKIP = 0
-
-    try:
-      RECENT = FILTER['recent']
-    except Exception:
-      RECENT = False
-
+    LIMIT = int(FILTER.get('limit', 25))
+    SKIP = int(FILTER.get('skip', 0))
+    RECENT = FILTER.get('recent', False)
     FILTER = FILTER['where']
 
     # implement aggregate
@@ -75,27 +61,22 @@ def parse_method(collect, FILTER):
         FILTER['status.created_at']['$lte'] = datetime.datetime.strptime(FILTER['status.created_at']['lte'], '%Y-%m-%dT%H:%M:%S.%f')
         FILTER['status.created_at'].pop('gte')
         FILTER['status.created_at'].pop('lte')
-
       except Exception as why:
         code = 400
         message = 'Invalid argument for Date: bad format or missing element.'
         raise NameError(str(why))
-
-
+    
     try:
       FILTER['keywords']['$in'] = FILTER['categories'].pop('inq')
     except Exception:
       pass
     
-    # Newly Implemented $all operator
     try:
       FILTER['keywords']['$all'] = FILTER['categories'].pop('all')
     except Exception:
       pass
 
-    parameters.append({
-      "$match" : FILTER
-    })
+    parameters.append({"$match" : FILTER})
     
     # limits in the input
     if RECENT:

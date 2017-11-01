@@ -8,17 +8,14 @@ def parse_img_per_word(collect, FILTER, projection, SKIP,LIMIT, parameters, RECE
   '''
   Returns list of tweets per word.
   '''
-
   word = parameters[0]['$match'].pop('word')  
   output = []
 
-  # MongoDB aggreg
   db_cursor = collect.aggregate(parameters)
-  print('\nRetweets acquired.\n')
 
   for doc in db_cursor:
     text = doc['status']['retweeted_status']['text']
-
+    
     tmp_text = filtered(text)
     tmp_text = tmp_text.translate(punct_tab)
     tmp_text = tmp_text.split(' ')
@@ -57,8 +54,8 @@ def parse_img_per_word(collect, FILTER, projection, SKIP,LIMIT, parameters, RECE
     db_cursor.close()
 
   output = sorted(output, key=itemgetter('count'), reverse=True)
-  output = output[SKIP:SKIP+LIMIT] # pagination implementation
-
+  output = output[SKIP:SKIP+LIMIT]
+  
   return output
 
 def parse_method(collect, FILTER):
@@ -68,23 +65,9 @@ def parse_method(collect, FILTER):
   message = 'Done'
 
   try:
-    # read the query input values
-    try:
-      LIMIT = int(FILTER['limit'])
-    except Exception:
-      LIMIT = 25
-
-    try:
-      SKIP = int(FILTER['skip'])
-    except Exception:
-      SKIP = 0
-
-    try:
-      RECENT = FILTER['recent']
-    except Exception:
-      RECENT = False
-
-
+    LIMIT = int(FILTER.get('limit', 25))
+    SKIP = int(FILTER.get('skip', 0))
+    RECENT = FILTER.get('recent', False)
     FILTER = FILTER['where']
 
     if not RECENT:
@@ -93,7 +76,6 @@ def parse_method(collect, FILTER):
         FILTER['status.created_at']['$lte'] = datetime.datetime.strptime(FILTER['status.created_at']['lte'], '%Y-%m-%dT%H:%M:%S.%f')
         FILTER['status.created_at'].pop('gte')
         FILTER['status.created_at'].pop('lte')
-
       except Exception as why:
         code = 400
         message = 'Invalid argument for Date: bad format or missing element.'
@@ -104,7 +86,6 @@ def parse_method(collect, FILTER):
     except Exception:
       pass
     
-    # Newly Implemented $all operator
     try:
       FILTER['keywords']['$all'] = FILTER['categories'].pop('all')
     except Exception:
@@ -117,20 +98,10 @@ def parse_method(collect, FILTER):
       message = 'Invalid argument for Word: bad format or missing element.'
       raise NameError(str(why))
 
-    # sets a projection to return
-    projection = { 'status': 1  }
-
     FILTER['status.retweeted_status'] = {'$exists':True}
-
-    # image posts only
     FILTER['status.entities.media.0'] = { '$exists': True }
 
-
     parameters.append({'$match' : FILTER})
-    if RECENT:
-      parameters.append({'$limit': LIMIT})
-      parameters.append({'$skip': SKIP})
-
     parameters.append({
       '$group': {
         '_id': { 'id_str': '$status.retweeted_status.id_str' },
@@ -156,12 +127,15 @@ def parse_method(collect, FILTER):
       }
     })
     
-    if not RECENT:
+    if RECENT:
+      parameters.append({'$limit': LIMIT})
+      parameters.append({'$skip': SKIP})
+    else:
       parameters.append({'$limit': 10*(LIMIT+SKIP)})
 
+    projection = { 'status': 1  }
     try:
       return_dict['data'] = parse_img_per_word(collect, FILTER, projection, SKIP,LIMIT, parameters, RECENT)
-
     except Exception as _why:
       print('DB Error: ' + str(_why))
 

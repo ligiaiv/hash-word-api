@@ -1,82 +1,58 @@
 # -*- coding: utf-8 -*-
-import json
-import urllib.request as request
-import datetime
-from bson import json_util
+from datetime import datetime
 
 from lib_text2 import filtered, clear_text
-
-
-def read_from_url(url):
-  response = request.urlopen(url)
-  raw = response.read()
-  data = json.loads(raw.decode())
-
-  return json.dumps(data, indent=4, default=json_util.default)
 
 
 def parse_word(collect, FILTER, projection, SKIP,LIMIT, parameters, RECENT):
   '''
   Returns list of top words plus count.
   '''
-  print('FILTER: \n%s'%parameters)
-  print('db parameters: \n%s'%parameters)
   word_count = {}
-  top = []
 
   if RECENT:
     db_cursor = collect.aggregate(parameters)
-    print('Retweets texts acquired')
     
     for doc in db_cursor:
       text = doc['retweeted_status']['text']
       rt_count = doc['count']
-
       tmp = clear_text(text)
 
-      # creates a word count
+      # count words only once
       temp_words = []
       for word in tmp:
         if word not in temp_words:
           temp_words.append(word)
           try:
             word_count[filtered(word)] += rt_count
-        
           except KeyError:
             word_count[filtered(word)] = rt_count
-        else:
-          # count words only once
-          pass
-  
-  if not RECENT:
-    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # MongoDB find
-    FILTER['status.retweeted_status'] = {'$exists':False}
+  else:
+    FILTER['status.retweeted_status'] = {'$exists': False}
 
     db_cursor = collect.find(FILTER, projection)
     print('Tweets texts acquired: %s'% db_cursor.count())
     
     for doc in db_cursor:
       text = doc['status']['text']
-
       tmp = clear_text(text)
-
       temp_words = []
+
+      # count words only once
       for word in tmp:
         if word not in temp_words:
           temp_words.append(word)
           try:
             word_count[filtered(word)] += 1
-        
           except KeyError:
             word_count[filtered(word)] = 1
         else:
-          # count words only once
+          
           pass
 
     db_cursor.close()
-
-  # CREATES LIST WITH COUNT
+  
+  top = []
   for word in word_count:
     tmp_tweets = []
 
@@ -97,31 +73,17 @@ def parse_method(collect, FILTER):
   message = 'Done'
 
   try:
-    # read the query input values
-    try:
-      LIMIT = int(FILTER['limit'])
-    except Exception:
-      LIMIT = 25
-
-    try:
-      SKIP = int(FILTER['skip'])
-    except Exception:
-      SKIP = 0
-
-    try:
-      RECENT = FILTER['recent']
-    except Exception:
-      RECENT = False
-
+    LIMIT = int(FILTER.get('limit', 25))
+    SKIP = int(FILTER.get('skip', 0))
+    RECENT = FILTER.get('recent', False)
     FILTER = FILTER['where']
   
     if not RECENT:  
       try:
-        FILTER['status.created_at']['$gte'] = datetime.datetime.strptime(FILTER['status.created_at']['gte'], '%Y-%m-%dT%H:%M:%S.%f')
-        FILTER['status.created_at']['$lte'] = datetime.datetime.strptime(FILTER['status.created_at']['lte'], '%Y-%m-%dT%H:%M:%S.%f')
+        FILTER['status.created_at']['$gte'] = datetime.strptime(FILTER['status.created_at']['gte'], '%Y-%m-%dT%H:%M:%S.%f')
+        FILTER['status.created_at']['$lte'] = datetime.strptime(FILTER['status.created_at']['lte'], '%Y-%m-%dT%H:%M:%S.%f')
         FILTER['status.created_at'].pop('gte')
         FILTER['status.created_at'].pop('lte')
-
       except Exception as why:
         code = 400
         message = 'Invalid argument for Date: bad format or missing element.'
@@ -137,8 +99,6 @@ def parse_method(collect, FILTER):
     except Exception:
       pass
 
-    # sets a projection to return
-    projection = { 'status.text': 1  }
 
     FILTER['status.retweeted_status'] = {'$exists':True}
 
@@ -148,6 +108,8 @@ def parse_method(collect, FILTER):
     if RECENT:
       parameters.append({'$limit': LIMIT})
       parameters.append({'$skip': SKIP})
+    else:
+      parameters.append({'$limit': 10*(LIMIT+SKIP)})
 
     parameters.append({
       '$group': {
@@ -160,9 +122,7 @@ def parse_method(collect, FILTER):
         'count': { '$sum': 1 }
       }
     })
-    parameters.append({
-      '$sort': { 'count': -1 }
-    })
+    parameters.append({'$sort': { 'count': -1 }})
     parameters.append({
       '$project': {
         '_id': 0,
@@ -170,7 +130,8 @@ def parse_method(collect, FILTER):
         'count':'$count'
       }
     })
-         
+    
+    projection = { 'status.text': 1  }
     try:
       return_dict['data'] = parse_word(collect, FILTER, projection, SKIP,LIMIT, parameters, RECENT)
     except Exception as _why:

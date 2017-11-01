@@ -53,34 +53,15 @@ def parse_post_per_word(collect, FILTER, projection, SKIP,LIMIT, parameters, REC
   return output
 
 def parse_method(collect, FILTER):
-  # from json import loads
-
-  # Dictionary for returning Data
   return_dict = {}
   parameters = []
-
-  # Default Code
   code = 200
   message = 'Done'
 
   try:
-    # read the query input values
-    try:
-      LIMIT = int(FILTER['limit'])
-    except Exception:
-      LIMIT = 25
-
-    try:
-      SKIP = int(FILTER['skip'])
-    except Exception:
-      SKIP = 0
-
-    try:
-      RECENT = FILTER['recent']
-    except Exception:
-      RECENT = False
-
-
+    LIMIT = int(FILTER.get('limit', 25))
+    SKIP = int(FILTER.get('skip', 0))
+    RECENT = FILTER.get('recent', False)
     FILTER = FILTER['where']
 
     if not RECENT:
