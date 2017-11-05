@@ -36,12 +36,12 @@ def get_about():
   by = 'Labic 2015 UFES<br>Vitória-ES Brasil'
   about_page = '<html><body><h1>'+ header +'</h1><br>by:'+ by +'<br><br><b>METHODS:</b><br><br>'
   methods = []
-  
+
   for method in METHODS:
     methods.append(method)
-  
+
   methods.sort()
-  
+
   for method in methods:
     description = METHODS[method].get('description')
     plataforms = []
@@ -59,7 +59,7 @@ def get_about():
 
     about_response = str(method).upper() + '<br>Plataforms:<br>' + str(plataform_txt) + '<br>Description:<br>' + str(description) + '<br>' + '<br>Parameters:<br>' + str(parameters) + '<br><br>'
     about_page = about_page + about_response
-  
+
   about_page = about_page + '</body></html>'
 
   return about_page
@@ -84,7 +84,7 @@ def setup_db():
   global SERVER, PORT, DB, COLLECT, CACHE, INTERVAL, USER, PASSWD
 
   DATA = read_db_config('config', 'db_init.py')
-  
+
   try:
     SERVER = DATA['server']
     PORT = DATA['port']
@@ -148,6 +148,6 @@ if __name__ == "__main__":
   except Exception:
     port = os.environ.get('PORT', 8081)
     print('Default port: ' + str(port))
-  
+
   # starts server
   run(host='0.0.0.0', port=port, server='cherrypy')

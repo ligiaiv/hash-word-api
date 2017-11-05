@@ -25,7 +25,7 @@ def parse_filter_cache(method, cache, _filter='', plataform=''):
   FILTER = {}
   # remove blocked posts
   # FILTER['where']['block'] = False
-  
+
   if not _filter:
     try:
       _filter = request.query.decode().get('filter')
@@ -34,22 +34,22 @@ def parse_filter_cache(method, cache, _filter='', plataform=''):
       required_missing = []
       parameters = METHODS[method]['parameters'].copy()
       print('parameters %s'%parameters)
-      
+
       for param in parameters:
         query_parameter = request.query.decode().getall(param)
-        
+
         if not query_parameter and parameters[param]['required']:
           required_missing.append(param)
         else:
           if parameters[param]['type'] == 'int':
             parameters[param] = int(query_parameter[0])
-          
+
           elif parameters[param]['type'] == 'string':
             parameters[param] = query_parameter[0]
 
           elif parameters[param]['type'] == 'vector':
             parameters[param] = query_parameter
-  
+
           elif parameters[param]['type'] == 'boolean':
             if query_parameter:
               parameters[param] = (query_parameter[0] == 'true')
@@ -89,7 +89,7 @@ def parse_filter_cache(method, cache, _filter='', plataform=''):
         raise NameError('Wrong timing.')
       # +++++++++++++++++++++++++++++++++++++++++++++++++++
       # recent
-      
+
       if not _delta == 'recent':
         delta = cache_dict_ms[_delta]
         gte = lte - datetime.timedelta(milliseconds=delta)
@@ -125,7 +125,7 @@ def word_api_request(_url_ = '', db=None, method='', plataform=''):
   For request parameters. Gets the type of request and returns the correct response.
   """
   response = None
-  
+
   # when a url is sent, it is a request from the cache generator
   # otherwise get parameters globally
   if not _url_:
@@ -144,7 +144,7 @@ def word_api_request(_url_ = '', db=None, method='', plataform=''):
     FILTER['found_on_cache']
     response = FILTER['data']
     cached = True
-  
+
   except Exception:
     cached = False
     # not in cache, so process it and inserts in cache
@@ -160,7 +160,7 @@ def word_api_request(_url_ = '', db=None, method='', plataform=''):
       response = parse_method(db['facebook_comments'], FILTER)
     elif(plataform=='instagram'):
       response = parse_method(db['instagram'], FILTER)
-    
+
   if not response:
     return []
   elif not cached:
